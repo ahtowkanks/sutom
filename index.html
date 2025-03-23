@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Candy Jar</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8e1f4;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Container for the whole jar */
+        .jar-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Bottle neck - Matches the jar color */
+        .bottle-neck {
+            width: 90px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px 20px 5px 5px;
+            position: absolute;
+            top: -20px;
+            z-index: -1; /* Moves behind the jar */
+            backdrop-filter: blur(5px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Pot (Jar Body) */
+        .pot {
+            width: 180px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50% 50% 30% 30%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
+            padding-bottom: 10px;
+        }
+
+        /* Candy styles */
+        .candy {
+            width: 25px;
+            height: 18px;
+            border-radius: 50%;
+            position: absolute; /* Now absolutely positioned for dragging */
+            cursor: grab;
+            user-select: none;
+        }
+
+        /* Random candy colors */
+        .candy:nth-child(odd) { background: linear-gradient(45deg, #ff4081, #d500f9); }
+        .candy:nth-child(even) { background: linear-gradient(45deg, #ffeb3b, #ff9800); }
+        .candy:nth-child(3n) { background: linear-gradient(45deg, #4caf50, #009688); }
+        .candy:nth-child(4n) { background: linear-gradient(45deg, #03a9f4, #3f51b5); }
+
+        /* Initial positioning for disorder */
+        .candy:nth-child(1) { top: 80px; left: 50px; }
+        .candy:nth-child(2) { top: 85px; left: 70px; }
+        .candy:nth-child(3) { top: 90px; left: 40px; }
+        .candy:nth-child(4) { top: 75px; left: 90px; }
+        .candy:nth-child(5) { top: 78px; left: 60px; }
+        .candy:nth-child(6) { top: 82px; left: 30px; }
+        .candy:nth-child(7) { top: 88px; left: 100px; }
+        .candy:nth-child(8) { top: 70px; left: 80px; }
+        .candy:nth-child(9) { top: 76px; left: 110px; }
+        .candy:nth-child(10) { top: 92px; left: 55px; }
+        .candy:nth-child(11) { top: 79px; left: 95px; }
+        .candy:nth-child(12) { top: 81px; left: 45px; }
+        .candy:nth-child(13) { top: 85px; left: 120px; }
+        .candy:nth-child(14) { top: 73px; left: 35px; }
+        .candy:nth-child(15) { top: 89px; left: 130px; }
+
+    </style>
+</head>
+<body>
+    <div class="jar-container">
+        <div class="bottle-neck"></div>
+        <div class="pot">
+            <!-- 15 Candies -->
+            <div class="candy"></div><div class="candy"></div><div class="candy"></div>
+            <div class="candy"></div><div class="candy"></div><div class="candy"></div>
+            <div class="candy"></div><div class="candy"></div><div class="candy"></div>
+            <div class="candy"></div><div class="candy"></div><div class="candy"></div>
+            <div class="candy"></div><div class="candy"></div><div class="candy"></div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.candy').forEach(candy => {
+            candy.addEventListener('mousedown', (e) => {
+                let shiftX = e.clientX - candy.getBoundingClientRect().left;
+                let shiftY = e.clientY - candy.getBoundingClientRect().top;
+
+                candy.style.position = 'absolute';
+                candy.style.zIndex = 1000; // Bring to front
+
+                function moveAt(pageX, pageY) {
+                    candy.style.left = pageX - shiftX + 'px';
+                    candy.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                document.addEventListener('mouseup', () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                }, { once: true });
+            });
+
+            // Prevent default drag behavior
+            candy.ondragstart = () => false;
+        });
+    </script>
+</body>
+</html>
